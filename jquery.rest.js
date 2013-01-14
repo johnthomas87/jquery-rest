@@ -29,31 +29,6 @@ var
 
 	$restProto = $rest.prototype,
 
-	buildUrl = function (obj, urlParts) {
-		var url = obj.url_;
-
-		if (url.substr(-1) != "\/") {
-			url += "\/";
-		}
-
-		if (urlParts) {
-			if (typeof urlParts == "string") {
-				url += encodeURI(urlParts);
-			} else {
-				var arr = [], i = 0, l = urlParts.length;
-				for (; l > i; ++i) {
-					if (urlParts[i] != _undefined) {
-						arr.push(encodeURIComponent("" + urlParts[i]));
-					}
-				}
-				url += arr.join("\/");
-			}
-			url += obj.ext_;
-		}
-
-		return url;
-	},
-
 	$ajax = function (type, url, data, success, dataType) {
 		if (typeof data == "function") {
 			dataType = dataType || success;
@@ -70,8 +45,8 @@ var
 		});
 	},
 
-	_ajax = function (type, urlParts, data, success, dataType) {
-		return $ajax(type, buildUrl(this, urlParts), data, success, this.jsonp_ || dataType);
+	_ajax = function (type, url, data, success, dataType) {
+		return $ajax(type, this.url_ + url, data, success, this.jsonp_ || dataType);
 	};
 
 	for (var key in verbs) {
