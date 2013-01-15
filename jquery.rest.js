@@ -1,26 +1,25 @@
-;(function ($) {
+(function ($) {
 
-var
-
-	_undefined,
-
-	verbs = {
+  var verbs = {
 		"GET"    : "get",
 		"POST"   : "post",
 		"PUT"    : "put",
 		"DELETE" : "del"
-	},
+	};
 
   // Rest service constructor
 	$.rest = function (url, options, jsonp) {
     this.url_       = url;
     this.options_   = options || {};
-	},
+	};
 
-	$restProto = $.rest.prototype,
+	var $restProto = $.rest.prototype;
 
   // Function that wraps $.ajax
-	_ajax = function (type, url, options) {
+	var _ajax = function (type, url, options) {
+    if( typeof options !== 'object' ) {
+      options = {};
+    }
     options.type = type;
     options.url = this.url_ + url;
     // Recursively merge the default options and the new options;
@@ -34,7 +33,7 @@ var
 	for (var httpMethod in verbs) {
     var restName = verbs[httpMethod];
     $restProto[restName] = function(url, options){
-      return _ajax(httpMethod, url, options);
+      return _ajax.call(this, httpMethod, url, options);
     };
 	}
 

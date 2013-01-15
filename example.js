@@ -7,7 +7,7 @@
 var twttr = new $.rest("http://api.twitter.com/1");
 
 // GET http://api.twitter.com/1/statuses/show/20.json
-twttr.get("/statuses/show/20.json").(function(data){});
+twttr.get("/statuses/show/20.json").done(function(data){console.log(data)});
 
 // DELETE http://api.twitter.com/1/statuses/destroy/20.json
 twttr.del("/statuses/destroy/20.json");
