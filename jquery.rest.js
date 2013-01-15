@@ -3,13 +3,6 @@
 var
 
 	_undefined,
-	_slice = Array.prototype.slice,
-	_partial = function (fn) {
-		var args = _slice.call(arguments, 1);
-		return function () {
-			return fn.apply(this, args.concat(_slice.call(arguments)));
-		};
-	},
 
 	verbs = {
 		"GET"    : "get",
@@ -18,33 +11,31 @@ var
 		"DELETE" : "del"
 	},
 
-	$rest = $.rest = function (url, options, jsonp) {
-		if (this instanceof $rest) {
-			this.url_       = url;
-			this.options_   = options || {};
-		}
+  // Rest service constructor
+	$.rest = function (url, options, jsonp) {
+    this.url_       = url;
+    this.options_   = options || {};
 	},
 
-	$restProto = $rest.prototype,
+	$restProto = $.rest.prototype,
 
-	$ajax = function (type, url, options) {
-		
-    options.type = type;
-    options.url = url;
-
-		return $.ajax(options);
-	},
-
+  // Function that wraps $.ajax
 	_ajax = function (type, url, options) {
-		return $ajax(type, this.url_ + url, options);
+    options.type = type;
+    options.url = this.url_ + url;
+    // Recursively merge the default options and the new options;
+    // New options trump; 
+    // Maintain both original options by extending an empty object
+    options = $.extend(true, {}, this.options_, options);
+		return $.ajax(options);
 	};
 
-	for (var key in verbs) {
-		if (verbs.hasOwnProperty(key)) {
-			var val = verbs[key];
-			$rest[val]      = _partial($ajax, key);
-			$restProto[val] = _partial(_ajax, key);
-		}
+  // Add .get, .post, .put, and .del to the rest service prototype
+	for (var httpMethod in verbs) {
+    var restName = verbs[httpMethod];
+    $restProto[restName] = function(url, options){
+      return _ajax(httpMethod, url, options);
+    };
 	}
 
 }(jQuery));
