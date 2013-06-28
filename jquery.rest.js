@@ -25,7 +25,15 @@
       options = {};
     }
     options.type = type;
-    options.url = this.url_ + url;
+    
+    // Use the URL as is if it includes a protocol,
+    // otherwise append it to the base url
+    if( url.match(/^https?:\/\//) ) {
+      options.url = url;
+    } else {
+      options.url = this.url_ + url;
+    }
+    
     // Recursively merge the default options and the new options;
     // New options trump; 
     // Maintain both original options by extending an empty object
